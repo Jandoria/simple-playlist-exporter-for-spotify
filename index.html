@@ -3,27 +3,15 @@
 
 <head>
   <meta charset="utf-8">
+  <link rel="icon" type="image/svg+xml" href="src/assets/vue.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Spotify Profile</title>
-  <script src="src/script.ts" type="module"></script>
+  <title>Simple Playlist Exporter</title>
   <link rel="stylesheet" href="src/style.css">
 </head>
 
 <body>
-  <h1>Display your Spotify Profile Data</h1>
-
-  <button id="login">Login with Spotify</button>
-  <section id="profile">
-    <h2>Logged in as <span id="displayName"></span></h2>
-    <a id="uri" href="#">
-      <img id="avatar" width="300" src="#" />
-    </a>
-    <ul>
-      <li>Email: <span id="email"></span></li>
-      <li>Profile Image: <span id="imgUrl"></span></li>
-    </ul>
-    <button id="close">Close session</button>
-  </section>
+  <div id="app"></div>
+  <script type="module" src="/src/main.js"></script>
 </body>
 
 </html>
