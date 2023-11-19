@@ -1,6 +1,6 @@
 # Simple Playlist Exporter
 
-Simple Playlist Exporter will be a web application designed to export Spotify playlists into plain text or CSV format. Built using Vite and TypeScript.
+Simple Playlist Exporter will be a web application designed to export Spotify playlists into plain text or CSV format. Built using Vue 3, Vite, TypeScript and Tailwind CSS.
 
 ## Features
 

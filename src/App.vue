@@ -6,11 +6,11 @@
     <div class="flex items-center gap-4 p-4">
       <img :src="userProfile.images[0].url" width="64" alt="Spotify profile picture" class="rounded-full" />
       <div class="flex flex-col">
-        <strong class="text-slate-900 font-medium dark:text-slate-200">{{ userProfile.display_name }}</strong>
+        <strong class="text-slate-900 font-semibold dark:text-slate-200">{{ userProfile.display_name }}</strong>
         <a
           :href="userProfile.external_urls.spotify"
           target="_blank"
-          class="text-slate-500 font-medium dark:text-slate-400 flex items-center"
+          class="text-slate-500 dark:text-slate-400 flex items-center"
         >
           View profile <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 ml-1">
             <path fill-rule="evenodd" d="M4.25 5.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0112.75 17h-8.5A2.25 2.25 0 012 14.75v-8.5A2.25 2.25 0 014.25 4h5a.75.75 0 010 1.5h-5z" clip-rule="evenodd" />
@@ -21,19 +21,35 @@
     </div>
     <button id="get-playlists" class="mr-4" @click="getPlaylists">Get my playlists</button>
     <button id="close" @click="logout">Close session</button>
+    <div class="max-w-md border-t border-slate-500 my-6" />
+    <PlaylistCard
+      v-for="playlist in playlists"
+      :key="playlist.id"
+      :image="playlist.images[0].url"
+      :name="playlist.name"
+      :description="playlist.description"
+      :external_url="playlist.external_urls.spotify"
+    />
   </section>
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted, reactive, toRefs } from 'vue';
 import { redirectToAuthCodeFlow, getAccessToken, getRefreshToken } from "./authCodeWithPkce";
+import PlaylistCard from './components/PlaylistCard.vue';
 
 export default defineComponent({
   name: 'App',
+
+  components: {
+    PlaylistCard
+  },
+
   setup() {
     const clientId = import.meta.env.VITE_CLIENT_ID;
     const state = reactive({
       userProfile: null as UserProfile | null,
+      playlists: [] as Playlist[],
     });
 
     const login = () => {
@@ -80,8 +96,8 @@ export default defineComponent({
             const result = await fetch(`https://api.spotify.com/v1/users/${profile.id}/playlists`, {
               method: "GET", headers: { Authorization: `Bearer ${storedAccessToken}` }
             });
-            console.log(result);
-            return await result.json();
+            const data = await result.json();
+            state.playlists = data.items;
           }
         }
       } catch (error: any) {

@@ -21,3 +21,16 @@ interface Image {
   height: number;
   width: number;
 }
+
+interface Playlist {
+  collaborative: boolean;
+  description: string;
+  external_urls: { spotify: string; };
+  followers: { href: string; total: number; };
+  href: string;
+  id: string;
+  images: Image[];
+  name: string;
+  public: boolean;
+  uri: string;
+}
