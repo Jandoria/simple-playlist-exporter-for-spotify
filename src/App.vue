@@ -27,10 +27,7 @@
       <PlaylistCard
         v-for="playlist in playlists"
         :key="playlist.id"
-        :image="playlist.images[0].url"
-        :name="playlist.name"
-        :description="playlist.description"
-        :external_url="playlist.external_urls.spotify"
+        :playlist="playlist"
       />
     </div>
   </section>
