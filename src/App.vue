@@ -1,15 +1,18 @@
 <template>
   <h1 class="text-5xl font-bold mb-16">Simple Playlist Exporter</h1>
   <!-- 1. Login with Spotify -->
-  <button v-if="!state.userProfile" @click="login">Login with Spotify</button>
+  <button v-if="!state.userProfile" class="btn" @click="login">Login with Spotify</button>
   <section v-else id="profile">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-4 p-4">
         <img :src="state.userProfile.images[0].url" width="64" alt="Spotify profile picture" class="rounded-full" />
         <div class="flex flex-col">
           <strong class="text-slate-900 font-semibold dark:text-slate-200 flex">{{ state.userProfile.display_name }}</strong>
-          <a :href="state.userProfile.external_urls.spotify" target="_blank"
-            class="text-slate-500 dark:text-slate-400 flex items-center">
+          <a
+            :href="state.userProfile.external_urls.spotify"
+            target="_blank"
+            class="text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300 flex items-center"
+          >
             View profile <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
               class="w-5 h-5 ml-1">
               <path fill-rule="evenodd"
@@ -22,9 +25,9 @@
           </a>
         </div>
       </div>
-      <button id="close" @click="logout">Logout</button>
+      <button class="btn" @click="logout">Logout</button>
     </div>
-    <button v-if="!state.playlists.length" class="my-4" @click="getPlaylists">Get my playlists</button>
+    <button v-if="!state.playlists.length" class="btn my-4" @click="getPlaylists">Get my playlists</button>
     <div v-if="state.playlists.length > 0"
       class="max-w-md border-y border-slate-500 divide-y divide-slate-500 divide-dashed my-6">
       <PlaylistCard
@@ -35,11 +38,16 @@
         @select="selectPlaylist"
       />
     </div>
+    <div v-if="selectedPlaylist">
+      <p class="mb-4">Export to:</p>
+      <button class="btn mr-4" @click="exportToText">Text</button>
+      <button class="btn" @click="exportToCSV">CSV</button>
+    </div>
   </section>
   <!-- 2. or paste link to public playlist -->
   <div class="my-6">——— or ———</div>
-  <p>Paste link to public playlist</p>
-  <input type="text" />
+  <p class="mb-2">Paste link to public playlist</p>
+  <input type="text" class="caret-slate-300 border-slate-300 border rounded p-2" />
   <!-- TODO  v-model="playlistUrl"-->
   <!-- 3. Export -->
   <!-- TODO -->
@@ -114,7 +122,14 @@ const getPlaylists = async () => {
 
 const selectPlaylist = (playlistId: string) => {
   selectedPlaylist.value = playlistId;
-  console.log("Playlist seleccionada:", playlistId);
+};
+
+const exportToText = () => {
+  console.log("Playlist a exportar a TEXTO:", selectedPlaylist.value);
+};
+
+const exportToCSV = () => {
+  console.log("Playlist a exportar a CSV:", selectedPlaylist.value);
 };
 
 onMounted(async () => {
@@ -136,3 +151,9 @@ onMounted(async () => {
   }
 });
 </script>
+
+<style scoped>
+.btn {
+  @apply rounded-lg border border-transparent px-5 py-2 bg-slate-950 cursor-pointer transition-colors duration-200 hover:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200;
+}
+</style>
