@@ -1,28 +1,29 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-
-defineProps({
+const props = defineProps({
   playlist: Object,
+  isSelected: Boolean,
 })
 
-const selectedPlaylist = ref('');
+const emit = defineEmits(['select']);
 
-const selectPlaylist = () => {
-  console.log("Playlist seleccionada:", selectedPlaylist.value);
+const onSelected = () => {
+  emit('select', props.playlist?.id);
 };
 </script>
 
 <template>
   <div v-if="playlist" class="flex items-center max-w-md gap-4">
-    <label class="flex flex-grow items-center hover:bg-slate-100 dark:hover:bg-slate-800 active:bg-slate-50 dark:active:bg-slate-700 p-2">
+    <label
+      class="flex flex-grow items-center cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 p-2"
+      :class="{ 'hover:bg-slate-50 dark:bg-slate-700 dark:hover:bg-slate-600': isSelected }"
+    >
       <input
         type="radio"
-        v-model="selectedPlaylist"
-        class="mr-2"
-        :value="playlist.id"
-        @change="selectPlaylist"
+        class="appearance-none"
+        :checked="isSelected"
+        @change="onSelected"
       >
-      <img :src="playlist.images[0].url" width="64" :alt="playlist.name" class="rounded" />
+      <img :src="playlist.images[0].url" width="64" :alt="playlist.name" class="rounded mr-2" />
       <div class="flex flex-col">
         <strong class="text-slate-900 font-semibold dark:text-slate-200">{{ playlist.name }}</strong>
         <span target="_blank" class="text-slate-500 dark:text-slate-400 flex items-center">

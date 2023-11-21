@@ -1,4 +1,4 @@
-interface UserProfile {
+export interface UserProfile {
   country: string;
   display_name: string;
   email: string;
@@ -22,7 +22,7 @@ interface Image {
   width: number;
 }
 
-interface Playlist {
+export interface Playlist {
   collaborative: boolean;
   description: string;
   external_urls: { spotify: string; };
