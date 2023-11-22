@@ -124,8 +124,32 @@ const selectPlaylist = (playlistId: string) => {
   selectedPlaylist.value = playlistId;
 };
 
-const exportToText = () => {
-  console.log("Playlist a exportar a TEXTO:", selectedPlaylist.value);
+const formatFilename = (playlist: Playlist, extension: string) => {
+  const name = playlist.name;
+  const owner = playlist.owner.display_name;
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const formattedDate = `${year}-${month}-${day}`;
+  const filename = `${formattedDate}-${owner}'s-${name}.${extension}`;
+  console.log("Filename:", filename);
+}
+const exportToText = async () => {
+  try {
+    const storedAccessToken = localStorage.getItem('accessToken');
+    if (storedAccessToken) {
+      const result = await fetch(`https://api.spotify.com/v1/playlists/${selectedPlaylist.value}`, {
+        method: "GET", headers: { Authorization: `Bearer ${storedAccessToken}` }
+      });
+      const data = await result.json();
+      formatFilename(data, 'txt');
+      const text = data.tracks?.items.map((item: any) => `${item.track.artists[0].name} - ${item.track.name}`).join('\n');
+      console.log(text);
+    }
+  } catch (error: any) {
+    console.log(error);
+  }
 };
 
 const exportToCSV = () => {

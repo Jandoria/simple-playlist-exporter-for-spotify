@@ -31,6 +31,7 @@ export interface Playlist {
   id: string;
   images: Image[];
   name: string;
+  owner: { display_name: string; href: string; id: string; type: string; uri: string; };
   public: boolean;
   uri: string;
 }
