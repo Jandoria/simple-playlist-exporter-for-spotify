@@ -38,19 +38,13 @@
         @select="selectPlaylist"
       />
     </div>
-    <div v-if="selectedPlaylist">
-      <p class="mb-4">Export to:</p>
-      <button class="btn mr-4" @click="exportToText">Text</button>
-      <button class="btn" @click="exportToCSV">CSV</button>
-    </div>
+    <ExportTo v-if="selectedPlaylist" from="selectedPlaylist" @to-text="exportToText" @to-csv="exportToCSV" />
   </section>
   <!-- 2. or paste link to public playlist -->
   <div class="my-6">——— or ———</div>
   <p class="mb-2">Paste link to public playlist</p>
-  <input type="text" class="caret-slate-300 border-slate-300 border rounded p-2" />
-  <!-- TODO  v-model="playlistUrl"-->
-  <!-- 3. Export -->
-  <!-- TODO -->
+  <input type="text" v-model="playlistUrl" class="caret-slate-300 border-slate-300 border rounded px-5 py-2 mb-5" />
+  <ExportTo v-if="playlistUrl" from="playlistUrl" @to-text="exportToText" @to-csv="exportToCSV" />
 </template>
 
 <script setup lang="ts">
@@ -58,8 +52,10 @@ import { onMounted, reactive, ref } from 'vue';
 import { redirectToAuthCodeFlow, getAccessToken, getRefreshToken } from "./authCodeWithPkce";
 import { UserProfile, Playlist } from './types';
 import PlaylistCard from './components/PlaylistCard.vue';
+import ExportTo from './components/ExportTo.vue';
 
 const selectedPlaylist = ref('');
+const playlistUrl = ref('');
 
 const clientId = import.meta.env.VITE_CLIENT_ID;
 const state = reactive({
@@ -135,11 +131,13 @@ const formatFilename = (playlist: Playlist, extension: string) => {
   const filename = `${formattedDate}-${owner}'s-${name}.${extension}`;
   console.log("Filename:", filename);
 }
-const exportToText = async () => {
+
+const exportToText = async (from: string) => {
+  const playlistId = from === "selectedPlaylist" ? selectedPlaylist.value : playlistUrl.value;
   try {
     const storedAccessToken = localStorage.getItem('accessToken');
     if (storedAccessToken) {
-      const result = await fetch(`https://api.spotify.com/v1/playlists/${selectedPlaylist.value}`, {
+      const result = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}`, {
         method: "GET", headers: { Authorization: `Bearer ${storedAccessToken}` }
       });
       const data = await result.json();
@@ -152,8 +150,10 @@ const exportToText = async () => {
   }
 };
 
-const exportToCSV = () => {
-  console.log("Playlist a exportar a CSV:", selectedPlaylist.value);
+const exportToCSV = (from: string) => {
+  const playlistId = from === "selectedPlaylist" ? selectedPlaylist.value : playlistUrl.value;
+
+  console.log("Playlist a exportar a CSV:", playlistId);
 };
 
 onMounted(async () => {
@@ -176,7 +176,7 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
+<style>
 .btn {
   @apply rounded-lg border border-transparent px-5 py-2 bg-slate-950 cursor-pointer transition-colors duration-200 hover:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200;
 }
