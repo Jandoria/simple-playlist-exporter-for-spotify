@@ -15,7 +15,9 @@ const toCSV = () => {
 </script>
 
 <template>
-  <p class="mb-4">Export to:</p>
-  <button class="btn mr-4" @click="toText">Text</button>
-  <button class="btn" @click="toCSV">CSV</button>
+  <div>
+    <p class="mb-4">Export to:</p>
+    <button class="btn mr-4" @click="toText">Text</button>
+    <button class="btn" @click="toCSV">CSV</button>
+  </div>
 </template>

@@ -38,13 +38,33 @@
         @select="selectPlaylist"
       />
     </div>
-    <ExportTo v-if="selectedPlaylist" from="selectedPlaylist" @to-text="exportToText" @to-csv="exportToCSV" />
+    <transition
+      enter-active-class="transition-all ease-out duration-500"
+      leave-active-class="transition-all ease-out duration-300"
+      enter-from-class="opacity-0 max-h-0"
+      enter-to-class="opacity-100 max-h-24"
+      leave-from-class="opacity-100 max-h-24"
+      leave-to-class="opacity-0 max-h-0"
+    >
+      <div v-if="selectedPlaylist" class="overflow-hidden">
+        <ExportTo from="selectedPlaylist" @to-text="exportToText" @to-csv="exportToCSV" />
+      </div>
+    </transition>
   </section>
   <!-- 2. or paste link to public playlist -->
   <div class="my-6">——— or ———</div>
   <p class="mb-2">Paste link to public playlist</p>
   <input type="text" v-model="playlistUrl" class="caret-slate-300 border-slate-300 border rounded px-5 py-2 mb-5" />
-  <ExportTo v-if="playlistUrl" from="playlistUrl" @to-text="exportToText" @to-csv="exportToCSV" />
+  <transition
+    enter-active-class="transition-opacity duration-500"
+    leave-active-class="transition-opacity duration-300"
+    enter-from-class="opacity-0"
+    enter-to-class="opacity-100"
+    leave-from-class="opacity-100"
+    leave-to-class="opacity-0"
+  >
+    <ExportTo v-if="playlistUrl" from="playlistUrl" @to-text="exportToText" @to-csv="exportToCSV" />
+  </transition>
 </template>
 
 <script setup lang="ts">
