@@ -18,9 +18,9 @@ function decodeHtmlCharCodes (str: string): string {
 </script>
 
 <template>
-  <div v-if="playlist" class="flex items-center max-w-md gap-4">
+  <div v-if="playlist" class="flex items-center gap-4">
     <label
-      class="flex flex-grow items-center cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 p-2"
+      class="flex items-center cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 p-2"
       :class="{ 'hover:bg-slate-50 dark:bg-slate-700 dark:hover:bg-slate-600': isSelected }"
     >
       <input
@@ -31,8 +31,10 @@ function decodeHtmlCharCodes (str: string): string {
       >
       <img :src="playlist.images[0].url" width="64" :alt="playlist.name" class="rounded mr-2" />
       <div class="flex flex-col text-left">
-        <strong class="text-slate-900 font-semibold dark:text-slate-200">{{ playlist.name }}</strong>
-        <span target="_blank" class="text-slate-500 dark:text-slate-400 flex items-center">
+        <strong class="w-80 truncate text-slate-900 font-semibold dark:text-slate-200" :title="decodeHtmlCharCodes(playlist.name)">
+          {{ playlist.name }}
+        </strong>
+        <span class="w-80 truncate text-slate-500 dark:text-slate-400" :title="decodeHtmlCharCodes(playlist.description)">
           {{ decodeHtmlCharCodes(playlist.description) }}
         </span>
       </div>
