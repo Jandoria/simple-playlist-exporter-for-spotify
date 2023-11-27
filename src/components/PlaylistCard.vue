@@ -30,7 +30,7 @@ function decodeHtmlCharCodes (str: string): string {
         @change="onSelected"
       >
       <img :src="playlist.images[0].url" width="64" :alt="playlist.name" class="rounded mr-2" />
-      <div class="flex flex-col">
+      <div class="flex flex-col text-left">
         <strong class="text-slate-900 font-semibold dark:text-slate-200">{{ playlist.name }}</strong>
         <span target="_blank" class="text-slate-500 dark:text-slate-400 flex items-center">
           {{ decodeHtmlCharCodes(playlist.description) }}
