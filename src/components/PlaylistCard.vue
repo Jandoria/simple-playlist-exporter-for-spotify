@@ -9,6 +9,12 @@ const emit = defineEmits(['select']);
 const onSelected = () => {
   emit('select', props.playlist?.id);
 };
+
+function decodeHtmlCharCodes (str: string): string {
+  const textArea = document.createElement('textarea');
+  textArea.innerHTML = str;
+  return textArea.value;
+}
 </script>
 
 <template>
@@ -27,7 +33,7 @@ const onSelected = () => {
       <div class="flex flex-col">
         <strong class="text-slate-900 font-semibold dark:text-slate-200">{{ playlist.name }}</strong>
         <span target="_blank" class="text-slate-500 dark:text-slate-400 flex items-center">
-          {{ playlist.description }}
+          {{ decodeHtmlCharCodes(playlist.description) }}
         </span>
       </div>
     </label>
