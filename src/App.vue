@@ -7,7 +7,7 @@
       <div class="flex items-center gap-4 p-4">
         <img :src="state.userProfile.images[0].url" width="64" alt="Spotify profile picture" class="rounded-full" />
         <div class="flex flex-col">
-          <strong class="text-slate-900 font-semibold dark:text-slate-200 flex">{{ state.userProfile.display_name }}</strong>
+          <strong class="cursor-default text-slate-900 font-semibold dark:text-slate-200 flex">{{ state.userProfile.display_name }}</strong>
           <a
             :href="state.userProfile.external_urls.spotify"
             target="_blank"
