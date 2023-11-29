@@ -28,6 +28,7 @@
       <button class="btn" @click="logout">Logout</button>
     </div>
     <button v-if="!state.playlists.length" class="btn my-4" @click="getPlaylists">Get my playlists</button>
+    <!-- TODO: if no playlist show info that there are no public playlists on the profile -->
     <div v-if="state.playlists.length > 0"
       class="max-w-md border-y border-slate-500 divide-y divide-slate-500 divide-dashed my-6">
       <PlaylistCard
@@ -55,6 +56,7 @@
   <div class="my-6">——— or ———</div>
   <p class="mb-2">Paste link to public playlist</p>
   <input type="text" v-model="playlistUrl" class="caret-slate-300 border-slate-300 border rounded px-5 py-2 mb-5" />
+  <!-- TODO: validate and show error -->
   <transition
     enter-active-class="transition-opacity duration-500"
     leave-active-class="transition-opacity duration-300"
@@ -198,6 +200,6 @@ onMounted(async () => {
 
 <style>
 .btn {
-  @apply rounded-lg border border-transparent px-5 py-2 bg-slate-950 cursor-pointer transition-colors duration-200 hover:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200;
+  @apply text-slate-800 dark:text-slate-100 bg-slate-100 dark:bg-slate-950 rounded-lg border border-transparent px-5 py-2 cursor-pointer transition-colors duration-200 hover:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200;
 }
 </style>

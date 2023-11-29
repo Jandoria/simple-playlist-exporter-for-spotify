@@ -31,7 +31,7 @@ function decodeHtmlCharCodes (str: string): string {
       >
       <img :src="playlist.images[0].url" width="64" :alt="playlist.name" class="rounded mr-2" />
       <div class="w-full flex flex-col text-left">
-        <strong class="w-[19.5rem] truncate text-slate-900 font-semibold dark:text-slate-200" :title="decodeHtmlCharCodes(playlist.name)">
+        <strong class="w-[19.5rem] truncate text-slate-900 dark:text-slate-200 font-semibold" :title="decodeHtmlCharCodes(playlist.name)">
           {{ playlist.name }}
         </strong>
         <span class="w-[19.5rem] truncate text-slate-500 dark:text-slate-400" :title="decodeHtmlCharCodes(playlist.description)">
@@ -40,9 +40,9 @@ function decodeHtmlCharCodes (str: string): string {
       </div>
     </label>
     <div class="flex flex-col p-2">
-      <div class="flex items-center mb-2" title="Songs">
+      <div class="flex items-center text-slate-900 dark:text-slate-200 mb-2" title="Songs">
         <small class="cursor-default mr-1">{{ playlist.tracks?.total }}</small>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="fill-slate-50 w-4 h-4">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="fill-current w-4 h-4">
           <path class="st0" d="M13.3,8.1C13.3,8,13.4,8,13.3,8.1c1.1-1.9,0.3-4.2-1.5-5.3c-0.6-0.3-1.1-0.7-1.5-1.2c-0.3-0.4-0.5-0.8-0.7-1.2	C9.2-0.3,8.2,0,8.1,0.8c-0.1,0.8,0,1.7,0,2.5c0,1.6,0,3.2,0,4.8c0,0.8,0,1.6,0,2.5C6.6,9.8,4.7,10.1,3.4,11	c-1.1,0.8-1.9,2.3-1.1,3.6c1.7,2.7,7.3,1.2,7.2-2c0,0,0-0.1,0-0.1c0-1.8,0-3.5,0-5.3c0-0.2,0-0.5,0-0.7c0.1-0.9,1.1-1.4,1.8-0.8	C11.8,6,12,6.6,12,7.1c0,0.3,0,0.6,0.1,0.9C12.3,8.5,12.9,8.5,13.3,8.1C13.3,8.1,13.3,8.1,13.3,8.1C13.3,8.1,13.3,8.1,13.3,8.1z"/>
         </svg>
       </div>
