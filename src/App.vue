@@ -78,6 +78,7 @@
     leave-from-class="opacity-100"
     leave-to-class="opacity-0"
   >
+    <!-- TODO: loading/ready status -->
     <ExportTo v-if="playlistUrl" from="playlistUrl" @to-text="exportToText" @to-csv="exportToCSV" />
   </transition>
 </template>
@@ -163,8 +164,7 @@ const formatFilename = (playlist: Playlist, extension: string) => {
   const month = date.getMonth() + 1;
   const day = date.getDate();
   const formattedDate = `${year}-${month}-${day}`;
-  const filename = `${formattedDate}-${owner}'s-${name}.${extension}`;
-  console.log("Filename:", filename);
+  return `${formattedDate}-${owner}'s-${name}.${extension}`;
 }
 
 const exportToText = async (from: string) => {
@@ -176,9 +176,16 @@ const exportToText = async (from: string) => {
         method: "GET", headers: { Authorization: `Bearer ${storedAccessToken}` }
       });
       const data = await result.json();
-      formatFilename(data, 'txt');
+      
       const text = data.tracks?.items.map((item: any) => `${item.track.artists[0].name} - ${item.track.name}`).join('\n');
-      console.log(text);
+
+      const blob = new Blob([text], { type: 'text/plain' });
+      const downloadLink = document.createElement('a');
+      downloadLink.href = URL.createObjectURL(blob);
+      downloadLink.download = formatFilename(data, 'txt');
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
     }
   } catch (error: any) {
     console.log(error);
