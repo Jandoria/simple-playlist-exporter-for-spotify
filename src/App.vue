@@ -3,7 +3,7 @@
   <!-- 1. Login with Spotify -->
   <button v-if="!state.userProfile" class="btn" @click="login">Login with Spotify</button>
   <section v-else id="profile">
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between mb-5">
       <div class="flex items-center gap-4 p-4">
         <img :src="state.userProfile.images[0].url" width="64" alt="Spotify profile picture" class="rounded-full" />
         <div class="flex flex-col">
@@ -27,8 +27,6 @@
       </div>
       <button class="btn" @click="logout">Logout</button>
     </div>
-    <button v-if="!state.playlists.length" class="btn my-4" @click="getPlaylists">Get my playlists</button>
-    <!-- TODO: if no playlist show info that there are no public playlists on the profile -->
     <div v-if="state.playlists.length > 0"
       class="max-w-md border-y border-slate-500 divide-y divide-slate-500 divide-dashed my-6">
       <PlaylistCard
@@ -38,6 +36,21 @@
         :isSelected="playlist.id === selectedPlaylist"
         @select="selectPlaylist"
       />
+    </div>
+    <div v-else>
+      <div class="flex rounded bg-amber-50 dark:bg-amber-200 text-yellow-700 dark:text-yellow-900 p-3">
+        <div class="shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="fill-yellow-400 dark:fill-yellow-600 w-5 h-5">
+            <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="flex flex-col text-left ml-3 leading-5 -mt-0.5">
+          <h3 class="font-semibold mb-2">No public playlists</h3>
+          <p>You don't have any public playlists <u>attached to your profile</u>, please make sure to add them in Spotify.</p>
+        </div>
+      </div>
+      <!-- TODO: loading status -->
+      <button class="btn my-4" @click="getPlaylists">Retry</button>
     </div>
     <transition
       enter-active-class="transition-all ease-out duration-500"
