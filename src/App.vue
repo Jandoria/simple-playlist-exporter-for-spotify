@@ -61,7 +61,7 @@
       leave-to-class="opacity-0 max-h-0"
     >
       <div v-if="selectedPlaylist" class="overflow-hidden">
-        <ExportTo from="selectedPlaylist" @to-text="exportToText" @to-csv="exportToCSV" />
+        <ExportTo from="selectedPlaylist" @to-text="fetchAndExportTo('text')" @to-csv="fetchAndExportTo('csv')" />
       </div>
     </transition>
   </section>
@@ -79,7 +79,7 @@
     leave-to-class="opacity-0"
   >
     <!-- TODO: loading/ready status -->
-    <ExportTo v-if="playlistUrl" from="playlistUrl" @to-text="exportToText" @to-csv="exportToCSV" />
+    <ExportTo v-if="playlistUrl" from="playlistUrl" @to-text="fetchAndExportTo('text')" @to-csv="fetchAndExportTo('csv')" />
   </transition>
 </template>
 
@@ -167,8 +167,8 @@ const formatFilename = (playlist: Playlist, extension: string) => {
   return `${formattedDate}-${owner}'s-${name}.${extension}`;
 }
 
-const exportToText = async (from: string) => {
-  const playlistId = from === "selectedPlaylist" ? selectedPlaylist.value : playlistUrl.value;
+const fetchAndExportTo = async (exportTo: string) => {
+  const playlistId = selectedPlaylist.value ? selectedPlaylist.value : playlistUrl.value;
   try {
     const storedAccessToken = localStorage.getItem('accessToken');
     if (storedAccessToken) {
@@ -176,26 +176,32 @@ const exportToText = async (from: string) => {
         method: "GET", headers: { Authorization: `Bearer ${storedAccessToken}` }
       });
       const data = await result.json();
-      
-      const text = data.tracks?.items.map((item: any) => `${item.track.artists[0].name} - ${item.track.name}`).join('\n');
-
-      const blob = new Blob([text], { type: 'text/plain' });
-      const downloadLink = document.createElement('a');
-      downloadLink.href = URL.createObjectURL(blob);
-      downloadLink.download = formatFilename(data, 'txt');
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
+      exportTo === 'text' ? exportToText(data) : exportToCSV(data);
     }
   } catch (error: any) {
     console.log(error);
   }
 };
 
-const exportToCSV = (from: string) => {
-  const playlistId = from === "selectedPlaylist" ? selectedPlaylist.value : playlistUrl.value;
+const downloadFile = (content: string, filename: string, mimeType: string) => {
+  const blob = new Blob([content], { type: mimeType });
+  const downloadLink = document.createElement('a');
+  downloadLink.href = URL.createObjectURL(blob);
+  downloadLink.download = filename;
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+};
 
-  console.log("Playlist a exportar a CSV:", playlistId);
+const exportToText = async (playlist: Playlist) => {
+  const text = playlist.tracks?.items.map((item: any) => `${item.track.artists[0].name} - ${item.track.name}`).join('\n');
+  downloadFile(text, formatFilename(playlist, 'txt'), 'text/plain');
+};
+
+const exportToCSV = (playlist: Playlist) => {
+  const csvRows = playlist.tracks?.items.map((item: any) => `${item.track.artists[0].name}, ${item.track.name}`);
+  const csvData = ['Artist, Track Name', ...csvRows].join('\n');
+  downloadFile(csvData, formatFilename(playlist, 'csv'), 'text/csv');
 };
 
 onMounted(async () => {

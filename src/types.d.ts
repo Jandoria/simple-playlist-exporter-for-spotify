@@ -33,5 +33,6 @@ export interface Playlist {
   name: string;
   owner: { display_name: string; href: string; id: string; type: string; uri: string; };
   public: boolean;
+  tracks: { href: string; total: number; items: Track[]; };
   uri: string;
 }
