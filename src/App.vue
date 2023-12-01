@@ -67,9 +67,9 @@
   </section>
   <!-- 2. or paste link to public playlist -->
   <div class="my-6">——— or ———</div>
-  <p class="mb-2">Paste link to public playlist</p>
+  <p class="mb-2">Paste link to public playlist or ID</p>
   <input type="text" v-model="playlistUrl" class="caret-slate-300 border-slate-300 border rounded px-5 py-2 mb-5" />
-  <!-- TODO: validate and show error -->
+  <p v-if="invalidUrl" class="text-red-600 dark:text-red-400">Please enter a valid Spotify playlist URL or ID.</p>
   <transition
     enter-active-class="transition-opacity duration-500"
     leave-active-class="transition-opacity duration-300"
@@ -79,12 +79,12 @@
     leave-to-class="opacity-0"
   >
     <!-- TODO: loading/ready status -->
-    <ExportTo v-if="playlistUrl" from="playlistUrl" @to-text="fetchAndExportTo('text')" @to-csv="fetchAndExportTo('csv')" />
+    <ExportTo v-if="playlistUrl && !invalidUrl" from="playlistUrl" @to-text="fetchAndExportTo('text')" @to-csv="fetchAndExportTo('csv')" />
   </transition>
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, computed } from 'vue';
 import { redirectToAuthCodeFlow, getAccessToken, getRefreshToken } from "./authCodeWithPkce";
 import { UserProfile, Playlist } from './types';
 import PlaylistCard from './components/PlaylistCard.vue';
@@ -148,13 +148,25 @@ const getPlaylists = async () => {
       }
     }
   } catch (error: any) {
-    console.log(error);
+    console.error(error);
   }
 };
 
 const selectPlaylist = (playlistId: string) => {
   selectedPlaylist.value = playlistId;
 };
+
+const isSpotifyPlaylistIdValid = (playlistId: string): boolean => {
+  return /^[0-9a-zA-Z]{22}$/.test(playlistId);
+};
+
+const isSpotifyPlaylistUrlValid = (url: string): boolean => {
+  return /^(https?:\/\/)?(www\.)?open\.spotify\.com\/playlist\/[0-9a-zA-Z]{22}(\?.*)?$/.test(url);
+};
+
+const invalidUrl = computed(() => {
+  return playlistUrl.value && !isSpotifyPlaylistIdValid(playlistUrl.value) && !isSpotifyPlaylistUrlValid(playlistUrl.value);
+});
 
 const formatFilename = (playlist: Playlist, extension: string) => {
   const name = playlist.name;
@@ -168,7 +180,13 @@ const formatFilename = (playlist: Playlist, extension: string) => {
 }
 
 const fetchAndExportTo = async (exportTo: string) => {
-  const playlistId = selectedPlaylist.value ? selectedPlaylist.value : playlistUrl.value;
+  if (invalidUrl.value) {
+    console.error("Invalid Spotify playlist URL or ID.");
+    return;
+  }
+  // TODO: implement "from"
+  // TODO: extract playlist id from url
+  const playlistId = !!selectedPlaylist.value ? selectedPlaylist.value : playlistUrl.value;
   try {
     const storedAccessToken = localStorage.getItem('accessToken');
     if (storedAccessToken) {
@@ -179,7 +197,7 @@ const fetchAndExportTo = async (exportTo: string) => {
       exportTo === 'text' ? exportToText(data) : exportToCSV(data);
     }
   } catch (error: any) {
-    console.log(error);
+    console.error(error);
   }
 };
 
