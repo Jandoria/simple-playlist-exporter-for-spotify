@@ -61,7 +61,7 @@
       leave-to-class="opacity-0 max-h-0"
     >
       <div v-if="selectedPlaylist" class="overflow-hidden">
-        <ExportTo from="selectedPlaylist" @to-text="fetchAndExportTo('text')" @to-csv="fetchAndExportTo('csv')" />
+        <ExportTo from="selectedPlaylist" @to-text="fetchAndExportTo($event, 'text')" @to-csv="fetchAndExportTo($event, 'csv')" />
       </div>
     </transition>
   </section>
@@ -79,7 +79,7 @@
     leave-to-class="opacity-0"
   >
     <!-- TODO: loading/ready status -->
-    <ExportTo v-if="playlistUrl && !invalidUrl" from="playlistUrl" @to-text="fetchAndExportTo('text')" @to-csv="fetchAndExportTo('csv')" />
+    <ExportTo v-if="playlistUrl && !invalidUrl" from="playlistUrl" @to-text="fetchAndExportTo($event, 'text')" @to-csv="fetchAndExportTo($event, 'csv')" />
   </transition>
 </template>
 
@@ -164,6 +164,17 @@ const isSpotifyPlaylistUrlValid = (url: string): boolean => {
   return /^(https?:\/\/)?(www\.)?open\.spotify\.com\/playlist\/[0-9a-zA-Z]{22}(\?.*)?$/.test(url);
 };
 
+const extractPlaylistId = (playlistId: string): string => {
+  if (isSpotifyPlaylistIdValid(playlistId)) {
+    return playlistId;
+  }
+  if (isSpotifyPlaylistUrlValid(playlistId)) {
+    const match = playlistId.match(/playlist\/([0-9a-zA-Z]{22})/);
+    return match ? match[1] : '';
+  }
+  return '';
+};
+
 const invalidUrl = computed(() => {
   return playlistUrl.value && !isSpotifyPlaylistIdValid(playlistUrl.value) && !isSpotifyPlaylistUrlValid(playlistUrl.value);
 });
@@ -179,14 +190,13 @@ const formatFilename = (playlist: Playlist, extension: string) => {
   return `${formattedDate}-${owner}'s-${name}.${extension}`;
 }
 
-const fetchAndExportTo = async (exportTo: string) => {
+const fetchAndExportTo = async (from: string, exportTo: string) => {
   if (invalidUrl.value) {
     console.error("Invalid Spotify playlist URL or ID.");
     return;
   }
-  // TODO: implement "from"
-  // TODO: extract playlist id from url
-  const playlistId = !!selectedPlaylist.value ? selectedPlaylist.value : playlistUrl.value;
+  const playlistId = extractPlaylistId(from === 'selectedPlaylist' ? selectedPlaylist.value : playlistUrl.value);
+
   try {
     const storedAccessToken = localStorage.getItem('accessToken');
     if (storedAccessToken) {
